@@ -14,8 +14,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Star Court Mall - Welcome to the 80s",
-  description: "Star Court Mall - Experience the 80s like never before",
+  title: "Star Court Mall",
+  description: "Star Court Mall",
 };
 
 export default function RootLayout({

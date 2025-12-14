@@ -50,9 +50,6 @@ export default function Home() {
           <p className="text-xl md:text-2xl font-mono" style={{ color: '#00ff41' }}>
             WELCOME TO THE FUTURE
           </p>
-          <p className="text-lg md:text-xl font-mono" style={{ color: '#00ffff' }}>
-            Experience the 80s like never before
-          </p>
           <div className="h-1 bg-gradient-to-r from-transparent via-cyan-400 to-transparent"></div>
         </div>
 

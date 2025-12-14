@@ -51,7 +51,7 @@ export function formatCurrency(amount: number): string {
 }
 
 /**
- * Format date in 80s style
+ * Format date
  */
 export function formatDate(date: Date): string {
   return new Intl.DateTimeFormat('en-US', {

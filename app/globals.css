@@ -24,7 +24,7 @@ body {
   min-height: 100vh;
 }
 
-/* 80s Neon Text Effect */
+/* Neon Text Effect */
 .neon-text {
   text-shadow: 
     0 0 5px currentColor,

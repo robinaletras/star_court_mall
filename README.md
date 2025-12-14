@@ -1,11 +1,11 @@
 # Star Court Mall - Stranger Things Theme Site
 
-A retro 80s-themed web application inspired by the Star Court Mall from Stranger Things, featuring a Fortnite betting arena.
+A retro web application inspired by the Star Court Mall from Stranger Things, featuring a Fortnite betting arena.
 
 ## Features
 
 ### Home Page
-- Retro 80s aesthetic with neon colors and CRT effects
+- Retro aesthetic with neon colors and CRT effects
 - Multiple app navigation (currently featuring Fortnite Betting)
 
 ### Fortnite Betting App
@@ -29,7 +29,7 @@ A retro 80s-themed web application inspired by the Star Court Mall from Stranger
 
 - **Framework:** Next.js 16 (App Router)
 - **Language:** TypeScript
-- **Styling:** Tailwind CSS with custom 80s theme
+- **Styling:** Tailwind CSS with custom retro theme
 - **Database:** Firebase Firestore
 - **Authentication:** Firebase Auth
 - **State Management:** React Context API
@@ -146,7 +146,7 @@ A retro 80s-themed web application inspired by the Star Court Mall from Stranger
 - Real-time match updates
 - Automated Bitcoin transaction monitoring
 - More betting apps
-- Enhanced 80s animations and effects
+- Enhanced animations and effects
 
 ## License
 

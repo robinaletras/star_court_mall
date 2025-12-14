@@ -27,8 +27,8 @@ export default function LoginPage() {
         await signIn(email, password);
       }
       router.push('/fortnite-betting');
-    } catch (err: any) {
-      setError(err.message || 'Authentication failed');
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Authentication failed');
     } finally {
       setLoading(false);
     }

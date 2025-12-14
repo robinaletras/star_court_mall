@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
-import { getMatches, Match } from '@/lib/firestore';
+import { getMatches } from '@/lib/firestore';
+import { Match } from '@/types';
 import Link from 'next/link';
 import MatchCard from '@/components/MatchCard';
 import UserDashboard from '@/components/UserDashboard';

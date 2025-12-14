@@ -11,6 +11,7 @@ const firebaseConfig = {
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
 };
 
+// Initialize Firebase only in browser
 let app: FirebaseApp;
 let auth: Auth;
 let db: Firestore;
@@ -23,6 +24,14 @@ if (typeof window !== 'undefined') {
   }
   auth = getAuth(app);
   db = getFirestore(app);
+} else {
+  // Server-side: create dummy instances (won't be used in static export)
+  // @ts-expect-error - These won't be used on server
+  app = null;
+  // @ts-expect-error
+  auth = null;
+  // @ts-expect-error
+  db = null;
 }
 
 export { auth, db };

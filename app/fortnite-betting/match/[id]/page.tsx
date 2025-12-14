@@ -9,6 +9,9 @@ import { calculateOdds, calculatePayout, formatCurrency, formatDate } from '@/li
 import BettingInterface from '@/components/BettingInterface';
 import Link from 'next/link';
 
+// Required for dynamic routes in Next.js
+export const dynamic = 'force-dynamic';
+
 export default function MatchDetailPage() {
   const params = useParams();
   const router = useRouter();
