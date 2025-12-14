@@ -4,13 +4,17 @@
 # This script creates the .env.local file with your Firebase config
 
 cat > .env.local << 'EOF'
-NEXT_PUBLIC_FIREBASE_API_KEY=AIzaSyC-KYXGtS5zg0fCktB9U9aWXqGJMAXES_o
+NEXT_PUBLIC_FIREBASE_API_KEY=YOUR_API_KEY_HERE
 NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=star-court-mall.firebaseapp.com
 NEXT_PUBLIC_FIREBASE_PROJECT_ID=star-court-mall
 NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=star-court-mall.firebasestorage.app
 NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=416911984118
 NEXT_PUBLIC_FIREBASE_APP_ID=1:416911984118:web:f18ba6c7c263608b7b73d7
 EOF
+
+echo "⚠️  IMPORTANT: Replace YOUR_API_KEY_HERE with your actual Firebase API Key"
+echo "   Get it from: https://console.firebase.google.com/project/star-court-mall/settings/general"
+echo ""
 
 echo "✅ Created .env.local file with Firebase configuration"
 echo ""
