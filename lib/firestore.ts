@@ -12,7 +12,8 @@ import {
   addDoc,
   Timestamp,
   serverTimestamp,
-  writeBatch
+  writeBatch,
+  Firestore
 } from 'firebase/firestore';
 import { db } from './firebase';
 import { 
@@ -25,14 +26,24 @@ import {
   AdminSettings 
 } from '@/types';
 
+// Helper function to ensure db is initialized
+function ensureDb(): Firestore {
+  if (!db) {
+    throw new Error('Firebase Firestore is not initialized. Please check your environment variables.');
+  }
+  return db;
+}
+
 // User Operations
 export async function getUser(userId: string): Promise<User | null> {
-  const userDoc = await getDoc(doc(db, 'users', userId));
+  const firestore = ensureDb();
+  const userDoc = await getDoc(doc(firestore, 'users', userId));
   if (!userDoc.exists()) return null;
   return { id: userDoc.id, ...userDoc.data() } as User;
 }
 
 export async function createUser(userId: string, email: string, displayName?: string): Promise<User> {
+  const firestore = ensureDb();
   const userData: Omit<User, 'id'> = {
     email,
     displayName,
@@ -41,7 +52,7 @@ export async function createUser(userId: string, email: string, displayName?: st
     createdAt: new Date(),
     updatedAt: new Date(),
   };
-  await setDoc(doc(db, 'users', userId), {
+  await setDoc(doc(firestore, 'users', userId), {
     ...userData,
     createdAt: serverTimestamp(),
     updatedAt: serverTimestamp(),
@@ -50,7 +61,8 @@ export async function createUser(userId: string, email: string, displayName?: st
 }
 
 export async function updateUserBalance(userId: string, amount: number): Promise<void> {
-  const userRef = doc(db, 'users', userId);
+  const firestore = ensureDb();
+  const userRef = doc(firestore, 'users', userId);
   const user = await getUser(userId);
   if (!user) throw new Error('User not found');
   
@@ -62,7 +74,8 @@ export async function updateUserBalance(userId: string, amount: number): Promise
 
 // Match Operations
 export async function getMatch(matchId: string): Promise<Match | null> {
-  const matchDoc = await getDoc(doc(db, 'matches', matchId));
+  const firestore = ensureDb();
+  const matchDoc = await getDoc(doc(firestore, 'matches', matchId));
   if (!matchDoc.exists()) return null;
   const data = matchDoc.data();
   return {
@@ -75,7 +88,8 @@ export async function getMatch(matchId: string): Promise<Match | null> {
 }
 
 export async function getMatches(status?: Match['status']): Promise<Match[]> {
-  let q = query(collection(db, 'matches'), orderBy('createdAt', 'desc'));
+  const firestore = ensureDb();
+  let q = query(collection(firestore, 'matches'), orderBy('createdAt', 'desc'));
   if (status) {
     q = query(q, where('status', '==', status));
   }
@@ -93,7 +107,8 @@ export async function getMatches(status?: Match['status']): Promise<Match[]> {
 }
 
 export async function createMatch(matchData: Omit<Match, 'id' | 'createdAt'>): Promise<string> {
-  const matchRef = doc(collection(db, 'matches'));
+  const firestore = ensureDb();
+  const matchRef = doc(collection(firestore, 'matches'));
   await setDoc(matchRef, {
     ...matchData,
     createdAt: serverTimestamp(),
@@ -102,7 +117,8 @@ export async function createMatch(matchData: Omit<Match, 'id' | 'createdAt'>): P
 }
 
 export async function updateMatch(matchId: string, updates: Partial<Match>): Promise<void> {
-  await updateDoc(doc(db, 'matches', matchId), {
+  const firestore = ensureDb();
+  await updateDoc(doc(firestore, 'matches', matchId), {
     ...updates,
     updatedAt: serverTimestamp(),
   });
@@ -114,7 +130,8 @@ export async function addPlayerToMatch(matchId: string, playerId: string): Promi
   if (match.playerIds.includes(playerId)) return; // Already added
   if (match.currentPlayers >= match.maxPlayers) throw new Error('Match is full');
   
-  await updateDoc(doc(db, 'matches', matchId), {
+  const firestore = ensureDb();
+  await updateDoc(doc(firestore, 'matches', matchId), {
     playerIds: [...match.playerIds, playerId],
     currentPlayers: match.currentPlayers + 1,
   });
@@ -122,8 +139,9 @@ export async function addPlayerToMatch(matchId: string, playerId: string): Promi
 
 // Objective Operations
 export async function getObjectives(matchId: string): Promise<Objective[]> {
+  const firestore = ensureDb();
   const q = query(
-    collection(db, 'objectives'),
+    collection(firestore, 'objectives'),
     where('matchId', '==', matchId),
     orderBy('createdAt', 'asc')
   );
@@ -139,7 +157,8 @@ export async function getObjectives(matchId: string): Promise<Objective[]> {
 }
 
 export async function createObjective(objectiveData: Omit<Objective, 'id' | 'createdAt'>): Promise<string> {
-  const objectiveRef = doc(collection(db, 'objectives'));
+  const firestore = ensureDb();
+  const objectiveRef = doc(collection(firestore, 'objectives'));
   await setDoc(objectiveRef, {
     ...objectiveData,
     createdAt: serverTimestamp(),
@@ -148,12 +167,14 @@ export async function createObjective(objectiveData: Omit<Objective, 'id' | 'cre
 }
 
 export async function updateObjective(objectiveId: string, updates: Partial<Objective>): Promise<void> {
-  await updateDoc(doc(db, 'objectives', objectiveId), updates);
+  const firestore = ensureDb();
+  await updateDoc(doc(firestore, 'objectives', objectiveId), updates);
 }
 
 // Bet Operations
 export async function createBet(betData: Omit<Bet, 'id' | 'createdAt'>): Promise<string> {
-  const betRef = doc(collection(db, 'bets'));
+  const firestore = ensureDb();
+  const betRef = doc(collection(firestore, 'bets'));
   await setDoc(betRef, {
     ...betData,
     createdAt: serverTimestamp(),
@@ -162,7 +183,8 @@ export async function createBet(betData: Omit<Bet, 'id' | 'createdAt'>): Promise
 }
 
 export async function getBets(userId?: string, matchId?: string): Promise<Bet[]> {
-  let q = query(collection(db, 'bets'), orderBy('createdAt', 'desc'));
+  const firestore = ensureDb();
+  let q = query(collection(firestore, 'bets'), orderBy('createdAt', 'desc'));
   if (userId) {
     q = query(q, where('userId', '==', userId));
   }
@@ -182,7 +204,8 @@ export async function getBets(userId?: string, matchId?: string): Promise<Bet[]>
 }
 
 export async function updateBet(betId: string, updates: Partial<Bet>): Promise<void> {
-  await updateDoc(doc(db, 'bets', betId), {
+  const firestore = ensureDb();
+  await updateDoc(doc(firestore, 'bets', betId), {
     ...updates,
     resolvedAt: updates.status !== 'pending' ? serverTimestamp() : undefined,
   });
@@ -190,7 +213,8 @@ export async function updateBet(betId: string, updates: Partial<Bet>): Promise<v
 
 // Transaction Operations
 export async function createTransaction(transactionData: Omit<Transaction, 'id' | 'createdAt'>): Promise<string> {
-  const txRef = doc(collection(db, 'transactions'));
+  const firestore = ensureDb();
+  const txRef = doc(collection(firestore, 'transactions'));
   await setDoc(txRef, {
     ...transactionData,
     createdAt: serverTimestamp(),
@@ -199,7 +223,8 @@ export async function createTransaction(transactionData: Omit<Transaction, 'id' 
 }
 
 export async function getTransactions(userId?: string): Promise<Transaction[]> {
-  let q = query(collection(db, 'transactions'), orderBy('createdAt', 'desc'));
+  const firestore = ensureDb();
+  let q = query(collection(firestore, 'transactions'), orderBy('createdAt', 'desc'));
   if (userId) {
     q = query(q, where('userId', '==', userId));
   }
@@ -216,7 +241,8 @@ export async function getTransactions(userId?: string): Promise<Transaction[]> {
 }
 
 export async function updateTransaction(transactionId: string, updates: Partial<Transaction>): Promise<void> {
-  await updateDoc(doc(db, 'transactions', transactionId), {
+  const firestore = ensureDb();
+  await updateDoc(doc(firestore, 'transactions', transactionId), {
     ...updates,
     completedAt: updates.status === 'completed' ? serverTimestamp() : undefined,
   });
@@ -226,7 +252,8 @@ export async function updateTransaction(transactionId: string, updates: Partial<
 export async function createWithdrawalRequest(
   requestData: Omit<WithdrawalRequest, 'id' | 'createdAt'>
 ): Promise<string> {
-  const requestRef = doc(collection(db, 'withdrawalRequests'));
+  const firestore = ensureDb();
+  const requestRef = doc(collection(firestore, 'withdrawalRequests'));
   await setDoc(requestRef, {
     ...requestData,
     createdAt: serverTimestamp(),
@@ -235,7 +262,8 @@ export async function createWithdrawalRequest(
 }
 
 export async function getWithdrawalRequests(status?: WithdrawalRequest['status']): Promise<WithdrawalRequest[]> {
-  let q = query(collection(db, 'withdrawalRequests'), orderBy('createdAt', 'desc'));
+  const firestore = ensureDb();
+  let q = query(collection(firestore, 'withdrawalRequests'), orderBy('createdAt', 'desc'));
   if (status) {
     q = query(q, where('status', '==', status));
   }
@@ -255,7 +283,8 @@ export async function updateWithdrawalRequest(
   requestId: string, 
   updates: Partial<WithdrawalRequest>
 ): Promise<void> {
-  await updateDoc(doc(db, 'withdrawalRequests', requestId), {
+  const firestore = ensureDb();
+  await updateDoc(doc(firestore, 'withdrawalRequests', requestId), {
     ...updates,
     processedAt: updates.status === 'completed' ? serverTimestamp() : undefined,
   });
@@ -263,7 +292,8 @@ export async function updateWithdrawalRequest(
 
 // Admin Settings
 export async function getAdminSettings(): Promise<AdminSettings | null> {
-  const settingsDoc = await getDoc(doc(db, 'adminSettings', 'main'));
+  const firestore = ensureDb();
+  const settingsDoc = await getDoc(doc(firestore, 'adminSettings', 'main'));
   if (!settingsDoc.exists()) return null;
   const data = settingsDoc.data();
   return {
@@ -274,7 +304,8 @@ export async function getAdminSettings(): Promise<AdminSettings | null> {
 }
 
 export async function updateAdminSettings(settings: Partial<AdminSettings>, updatedBy: string): Promise<void> {
-  await setDoc(doc(db, 'adminSettings', 'main'), {
+  const firestore = ensureDb();
+  await setDoc(doc(firestore, 'adminSettings', 'main'), {
     ...settings,
     updatedAt: serverTimestamp(),
     updatedBy,
