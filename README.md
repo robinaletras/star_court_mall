@@ -1,36 +1,153 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Star Court Mall - Stranger Things Theme Site
 
-## Getting Started
+A retro 80s-themed web application inspired by the Star Court Mall from Stranger Things, featuring a Fortnite betting arena.
 
-First, run the development server:
+## Features
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+### Home Page
+- Retro 80s aesthetic with neon colors and CRT effects
+- Multiple app navigation (currently featuring Fortnite Betting)
+
+### Fortnite Betting App
+- **User Features:**
+  - View available matches
+  - Place bets on match objectives
+  - Deposit funds via Bitcoin
+  - Request withdrawals
+  - Track account balance
+
+- **Admin Features:**
+  - Create and manage matches
+  - Add betting objectives with custom parameters
+  - Set odds (base 100:1 with customizable multipliers)
+  - Manage deposits (approve/reject and credit accounts)
+  - Manage withdrawal requests (approve/reject and process)
+  - Configure Bitcoin deposit address
+  - Set betting limits and default odds
+
+## Tech Stack
+
+- **Framework:** Next.js 16 (App Router)
+- **Language:** TypeScript
+- **Styling:** Tailwind CSS with custom 80s theme
+- **Database:** Firebase Firestore
+- **Authentication:** Firebase Auth
+- **State Management:** React Context API
+
+## Setup Instructions
+
+1. **Install Dependencies**
+   ```bash
+   npm install
+   ```
+
+2. **Firebase Setup**
+   - Create a Firebase project at https://console.firebase.google.com
+   - Enable Firestore Database
+   - Enable Authentication (Email/Password)
+   - Copy your Firebase configuration
+   - Create a `.env.local` file with your Firebase credentials:
+     ```
+     NEXT_PUBLIC_FIREBASE_API_KEY=your_api_key
+     NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=your_project.firebaseapp.com
+     NEXT_PUBLIC_FIREBASE_PROJECT_ID=your_project_id
+     NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=your_project.appspot.com
+     NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
+     NEXT_PUBLIC_FIREBASE_APP_ID=your_app_id
+     ```
+
+3. **Firestore Security Rules**
+   Set up appropriate security rules in Firebase Console. Example:
+   ```javascript
+   rules_version = '2';
+   service cloud.firestore {
+     match /databases/{database}/documents {
+       match /users/{userId} {
+         allow read, write: if request.auth != null && request.auth.uid == userId;
+         allow read: if request.auth != null && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+       }
+       match /matches/{matchId} {
+         allow read: if request.auth != null;
+         allow write: if request.auth != null && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+       }
+       // Add more rules for other collections
+     }
+   }
+   ```
+
+4. **Run Development Server**
+   ```bash
+   npm run dev
+   ```
+
+5. **Create Admin User**
+   - Sign up a user account
+   - In Firebase Console, go to Firestore
+   - Find the user document and set `role: 'admin'`
+
+## Project Structure
+
+```
+/app
+  /fortnite-betting
+    /admin          # Admin panel
+    /match/[id]     # Match detail page
+    page.tsx        # Main betting page
+  /login           # Authentication page
+  page.tsx         # Home page
+/components        # React components
+/contexts          # React contexts (Auth)
+/lib               # Utilities and Firebase config
+/types             # TypeScript type definitions
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Key Features Explained
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Betting System
+- Base odds: 100:1 (configurable)
+- Odds calculation considers:
+  - Item count
+  - Elimination count
+  - Difficulty multiplier
+  - Custom parameters
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### Deposit/Withdrawal Flow
+1. **Deposit:**
+   - User sends Bitcoin to admin-configured address
+   - User notifies admin with transaction hash
+   - Admin verifies and credits account
 
-## Learn More
+2. **Withdrawal:**
+   - User requests withdrawal with Bitcoin address
+   - Admin processes and sends Bitcoin
+   - Admin records transaction hash
+   - Request marked as completed
 
-To learn more about Next.js, take a look at the following resources:
+### Match Management
+- Admin creates matches with Fortnite codes
+- Admin adds objectives with custom parameters
+- System calculates odds automatically
+- Pot rollover if prize not claimed
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Deployment
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+1. Build the project:
+   ```bash
+   npm run build
+   ```
 
-## Deploy on Vercel
+2. Deploy to Vercel, Netlify, or your preferred hosting platform
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+3. Ensure environment variables are set in your hosting platform
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Future Enhancements
+
+- Player application system
+- Real-time match updates
+- Automated Bitcoin transaction monitoring
+- More betting apps
+- Enhanced 80s animations and effects
+
+## License
+
+Private project - All rights reserved

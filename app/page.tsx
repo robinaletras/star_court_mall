@@ -1,65 +1,117 @@
-import Image from "next/image";
+'use client';
+
+import Link from 'next/link';
+import { useEffect, useState } from 'react';
 
 export default function Home() {
+  const [time, setTime] = useState(new Date());
+
+  useEffect(() => {
+    const timer = setInterval(() => setTime(new Date()), 1000);
+    return () => clearInterval(timer);
+  }, []);
+
+  const formatTime = (date: Date) => {
+    return date.toLocaleTimeString('en-US', {
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: false,
+    });
+  };
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
+    <div className="min-h-screen flex flex-col items-center justify-center p-8 relative overflow-hidden">
+      {/* Animated Background Grid */}
+      <div className="absolute inset-0 opacity-20">
+        <div className="grid grid-cols-20 gap-4 h-full w-full" style={{
+          backgroundImage: 'linear-gradient(rgba(0, 255, 65, 0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(0, 255, 65, 0.1) 1px, transparent 1px)',
+          backgroundSize: '40px 40px'
+        }}></div>
+      </div>
+
+      {/* Main Content */}
+      <div className="relative z-10 text-center space-y-8 max-w-4xl">
+        {/* Title */}
+        <div className="space-y-4">
+          <h1 className="text-6xl md:text-8xl font-bold neon-text" style={{ color: '#00ff41' }}>
+            STAR COURT
           </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+          <h2 className="text-4xl md:text-6xl font-bold neon-text" style={{ color: '#00ffff' }}>
+            MALL
+          </h2>
+          <div className="text-2xl md:text-3xl font-mono" style={{ color: '#ffff00' }}>
+            {formatTime(time)}
+          </div>
+        </div>
+
+        {/* Welcome Message */}
+        <div className="bg-black/50 border-4 border-cyan-400 p-8 space-y-6 backdrop-blur-sm">
+          <p className="text-xl md:text-2xl font-mono" style={{ color: '#00ff41' }}>
+            WELCOME TO THE FUTURE
           </p>
+          <p className="text-lg md:text-xl font-mono" style={{ color: '#00ffff' }}>
+            Experience the 80s like never before
+          </p>
+          <div className="h-1 bg-gradient-to-r from-transparent via-cyan-400 to-transparent"></div>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+
+        {/* App Navigation */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-12">
+          {/* Fortnite Betting App */}
+          <Link href="/fortnite-betting">
+            <div className="retro-button p-8 text-center cursor-pointer group">
+              <div className="text-3xl mb-4 group-hover:scale-110 transition-transform">
+                🎮
+              </div>
+              <h3 className="text-2xl font-bold mb-2 neon-text" style={{ color: '#ff00ff' }}>
+                FORTNITE
+              </h3>
+              <h4 className="text-xl font-bold mb-4 neon-text" style={{ color: '#ffff00' }}>
+                BETTING ARENA
+              </h4>
+              <p className="text-sm font-mono" style={{ color: '#00ffff' }}>
+                Place bets on live matches
+              </p>
+              <p className="text-xs font-mono mt-2" style={{ color: '#00ff41' }}>
+                [ENTER]
+              </p>
+            </div>
+          </Link>
+
+          {/* Coming Soon Placeholder */}
+          <div className="retro-button p-8 text-center opacity-50">
+            <div className="text-3xl mb-4">
+              🔮
+            </div>
+            <h3 className="text-2xl font-bold mb-2" style={{ color: '#666' }}>
+              COMING SOON
+            </h3>
+            <p className="text-sm font-mono" style={{ color: '#666' }}>
+              More apps on the way
+            </p>
+          </div>
         </div>
-      </main>
+
+        {/* Footer Info */}
+        <div className="mt-12 space-y-4">
+          <div className="text-sm font-mono space-y-2" style={{ color: '#00ffff' }}>
+            <p>© 1985 STAR COURT MALL</p>
+            <p>ALL RIGHTS RESERVED</p>
+          </div>
+          <Link href="/login">
+            <div className="retro-button px-6 py-3 inline-block font-mono">
+              <span style={{ color: '#00ff41' }}>LOGIN / SIGN UP</span>
+            </div>
+          </Link>
+        </div>
+      </div>
+
+      {/* Animated Corner Decorations */}
+      <div className="absolute top-4 left-4 w-16 h-16 border-4 border-cyan-400 opacity-50"></div>
+      <div className="absolute top-4 right-4 w-16 h-16 border-4 border-pink-500 opacity-50"></div>
+      <div className="absolute bottom-4 left-4 w-16 h-16 border-4 border-yellow-400 opacity-50"></div>
+      <div className="absolute bottom-4 right-4 w-16 h-16 border-4 border-green-400 opacity-50"></div>
     </div>
   );
 }
