@@ -1,0 +1,14 @@
+Copy these environment variable names and values to Vercel:
+
+1. NEXT_PUBLIC_FIREBASE_API_KEY
+2. NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN
+3. NEXT_PUBLIC_FIREBASE_PROJECT_ID
+4. NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET
+5. NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID
+6. NEXT_PUBLIC_FIREBASE_APP_ID
+
+To get the values, run:
+  cat .env.local
+
+Then copy each value into Vercel's Environment Variables section.
+

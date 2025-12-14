@@ -11,27 +11,47 @@ const firebaseConfig = {
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
 };
 
+// Validate Firebase config
+const isConfigValid = () => {
+  return (
+    firebaseConfig.apiKey &&
+    firebaseConfig.authDomain &&
+    firebaseConfig.projectId &&
+    firebaseConfig.storageBucket &&
+    firebaseConfig.messagingSenderId &&
+    firebaseConfig.appId
+  );
+};
+
 // Initialize Firebase only in browser
-let app: FirebaseApp;
-let auth: Auth;
-let db: Firestore;
+let app: FirebaseApp | null = null;
+let auth: Auth | null = null;
+let db: Firestore | null = null;
 
 if (typeof window !== 'undefined') {
-  if (!getApps().length) {
-    app = initializeApp(firebaseConfig);
+  if (!isConfigValid()) {
+    console.error('Firebase configuration is missing. Please check your environment variables.');
+    const missingVars: string[] = [];
+    if (!firebaseConfig.apiKey) missingVars.push('NEXT_PUBLIC_FIREBASE_API_KEY');
+    if (!firebaseConfig.authDomain) missingVars.push('NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN');
+    if (!firebaseConfig.projectId) missingVars.push('NEXT_PUBLIC_FIREBASE_PROJECT_ID');
+    if (!firebaseConfig.storageBucket) missingVars.push('NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET');
+    if (!firebaseConfig.messagingSenderId) missingVars.push('NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID');
+    if (!firebaseConfig.appId) missingVars.push('NEXT_PUBLIC_FIREBASE_APP_ID');
+    console.error('Missing environment variables:', missingVars.join(', '));
   } else {
-    app = getApps()[0];
+    try {
+      if (!getApps().length) {
+        app = initializeApp(firebaseConfig);
+      } else {
+        app = getApps()[0];
+      }
+      auth = getAuth(app);
+      db = getFirestore(app);
+    } catch (error) {
+      console.error('Error initializing Firebase:', error);
+    }
   }
-  auth = getAuth(app);
-  db = getFirestore(app);
-} else {
-  // Server-side: create dummy instances (won't be used in static export)
-  // @ts-expect-error - These won't be used on server
-  app = null;
-  // @ts-expect-error
-  auth = null;
-  // @ts-expect-error
-  db = null;
 }
 
 export { auth, db };

@@ -31,6 +31,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (!auth) {
+      console.error('Firebase auth is not initialized. Please check your environment variables.');
+      setLoading(false);
+      return;
+    }
+
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       setFirebaseUser(firebaseUser);
       if (firebaseUser) {
@@ -59,10 +65,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const signIn = async (email: string, password: string) => {
+    if (!auth) {
+      throw new Error('Firebase auth is not initialized. Please check your environment variables.');
+    }
     await signInWithEmailAndPassword(auth, email, password);
   };
 
   const signUp = async (email: string, password: string, displayName?: string) => {
+    if (!auth) {
+      throw new Error('Firebase auth is not initialized. Please check your environment variables.');
+    }
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
     if (displayName) {
       await updateProfile(userCredential.user, { displayName });
@@ -71,6 +83,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const signOut = async () => {
+    if (!auth) {
+      throw new Error('Firebase auth is not initialized. Please check your environment variables.');
+    }
     await firebaseSignOut(auth);
     setUser(null);
   };
